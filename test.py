@@ -1,7 +1,7 @@
 import http.server
 import socketserver
 from urllib.parse import parse_qs
-
+import pickle
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
@@ -11,9 +11,23 @@ class Vocab():
     def __init__(self, name):
         self.name = name
 
-classList = [Vocab("Level 1"), Vocab("personal"), Vocab("Level 3")]
+
+def write_to_file():
+    print("Writing to file")
+    with open("items.pkl", "wb") as f:
+        pickle.dump(classList, f)
+        print(str(classList))
+
+def read_from_file():
+    print("Reading from file")
+    with open("items.pkl", "rb") as f:
+        a = pickle.load(f)
+        return a
+
+classList = read_from_file()
 
 def make_html_list():
+    classList = read_from_file()
     text = ""
     for i in range(len(classList)):
         name = classList[i].name
@@ -50,14 +64,14 @@ class SimpleHandler(BaseHTTPRequestHandler):
         # Add Vocab
         if action == "add":
             vocab_value = data.get("vocab", [None])[0]
-            print(vocab_value)
             a = Vocab(vocab_value)
             classList.append(a)
+            write_to_file()
         # Delete Vocab
         if action == "delete":
             id_value = int(data.get("id", [-1])[0])
             classList.pop(id_value)
-
+            write_to_file()
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
