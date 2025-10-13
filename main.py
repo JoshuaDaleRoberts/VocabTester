@@ -1,9 +1,5 @@
-print("Hello World")
 import webbrowser
-import os
-f = open("index.html", "w")
+from pathlib import Path
 
-file_path = os.path.abspath("index.html")
-webbrowser.open(f"file://{file_path}")
-
-
+file_path = Path("index.html").resolve()
+webbrowser.open(file_path.as_uri(), new=2)
