@@ -11,34 +11,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        self.wfile.write(b"""
-        <html>
-        <body>
-            <form method="POST">
-                <button type="submit">Hello World</button>
-            </form>
-        </body>
-        </html>
-        """)
-
+        with open("index.html", "rb") as f:
+          self.wfile.write(f.read())
+        
     def do_POST(self):
         print("hello world")  # This prints to the console
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        self.wfile.write(b"""
-        <html>
-        <body>
-            <form method="POST">
-                <button type="submit">Hello World</button>
-            </form>
-        </body>
-        </html>
-        """)
+        with open("index.html", "rb") as f:
+          self.wfile.write(f.read())
+
 if __name__ == "__main__":
-    server = HTTPServer(('localhost', 8000), SimpleHandler)
+    server = HTTPServer(('localhost', port), SimpleHandler)
     print("Server running on http://localhost:8000")
     server.serve_forever()
 
 
 
+  
