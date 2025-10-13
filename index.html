@@ -10,9 +10,15 @@
   <ul>  
     <!-- ITEMS -->
   </ul>
-  <button type="button">
-    New File
-  </button>
+
+  <form action = "/" method = "post">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="vocab" placeholder="New Item" autocomplete="off">
+    <button type="submit">
+      Add Class
+    </button>
+  </form>
+<br>
   <button type="button">
     Import
   </button>
