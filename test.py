@@ -41,7 +41,7 @@ def make_html_list():
         text += f""" 
         <li>
             <a href="/class?{i}">{name}</a>
-            <form method="post" action="/">
+            <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this class?');">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="id" value="{i}">
                 <button type="submit">Delete</button>
@@ -56,7 +56,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         page = urlparse(self.path)
-        print(page)
         if page.path == "/class":
             with open("class.html", "rb") as f:
                 html = f.read()
@@ -76,7 +75,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = parse_qs(post_data.decode('utf-8'))
         action = data.get("action", [""])[0]
-        print(action)
         # Add Vocab
         if action == "add":
             vocab_value = data.get("vocab", [None])[0]
