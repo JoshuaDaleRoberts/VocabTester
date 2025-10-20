@@ -7,25 +7,31 @@ Handler = http.server.SimpleHTTPRequestHandler
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+# Define a simple class to hold vocab items
 class Vocab():
     def __init__(self, name):
         self.name = name
 
 
+# Functions to read and write the class list to a file
 def write_to_file():
-    print("Writing to file")
     with open("items.pkl", "wb") as f:
         pickle.dump(classList, f)
-        print(str(classList))
 
+# Function to read the class list from a file
 def read_from_file():
-    print("Reading from file")
     with open("items.pkl", "rb") as f:
         a = pickle.load(f)
         return a
 
-classList = read_from_file()
+# Initialize the class list, but grab from file if it exists
+try:
+    classList = read_from_file()
+except FileNotFoundError:
+    classList = []
+    pickle.dump(classList, open("items.pkl", "wb"))
 
+# Function to generate HTML list items from the class list
 def make_html_list():
     classList = read_from_file()
     text = ""
