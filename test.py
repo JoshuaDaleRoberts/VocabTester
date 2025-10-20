@@ -2,6 +2,7 @@ import http.server
 import socketserver
 from urllib.parse import parse_qs
 import pickle
+from urllib.parse import urlparse
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
@@ -39,7 +40,7 @@ def make_html_list():
         name = classList[i].name
         text += f""" 
         <li>
-            <p>{name}</p>
+            <a href="/class?{i}">{name}</a>
             <form method="post" action="/">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="id" value="{i}">
@@ -54,9 +55,19 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        with open("index.html", "rb") as f:
-          html = f.read()
-        html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
+        page = urlparse(self.path)
+        print(page)
+        if page.path == "/class":
+            with open("class.html", "rb") as f:
+                html = f.read()
+            class_number = page.query
+            class_name = classList[int(class_number)].name
+            html = html.replace(b"<!-- c -->", class_name.encode('utf-8'))
+        else: 
+            with open("index.html", "rb") as f:
+                html = f.read()
+            html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
+            
         self.wfile.write(html)
         
     def do_POST(self):
