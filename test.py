@@ -56,7 +56,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.end_headers()
         with open("index.html", "rb") as f:
           html = f.read()
-        #   html = html.replace(b"<!-- ITEMS -->", b"\n".join(f"<li>\n{item.name}\n <button type='button'>Delete</button></li>".encode('utf-8') for item in classList))
         html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
         self.wfile.write(html)
         
