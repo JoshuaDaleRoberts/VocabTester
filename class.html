@@ -9,9 +9,15 @@
   <h1>Class Page</h1>
   <p> <!-- c --> </p>
   <a href="/">Back to Home</a>
-  <form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
+  <form action="/" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" title="file">
+    <input type="hidden" name="class_name" value='replace_with_class_name'>
+    <input type="hidden" name="action" value="upload">
     <input type="submit" value="Upload">
   </form>
+  <h2> Files </h2>
+  <ul>
+    <!-- FILES -->
+  </ul>
 </body>
 </html>

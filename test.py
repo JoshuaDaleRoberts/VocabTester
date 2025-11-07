@@ -3,6 +3,7 @@ import socketserver
 import pickle
 import os
 import cgi
+import textract
 from urllib.parse import urlparse, parse_qs
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
@@ -61,12 +62,28 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.end_headers()
         page = urlparse(self.path)
         if page.path == "/class":
+            # Serve class page
             with open("class.html", "rb") as f:
                 html = f.read()
             class_number = page.query
             class_name = classList[int(class_number)].name
+            # Handles title of class page
             html = html.replace(b"<!-- c -->", class_name.encode('utf-8'))
-        else: 
+            # Handles form building for uploads
+            html = html.replace(b"replace_with_class_name", class_name.encode('utf-8'))
+            # grabbing uploaded files
+            try:
+                file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
+                print(file_array)
+            except FileNotFoundError:
+                file_array = []
+            file_list_html = ""
+            for file in file_array:
+                file_list_html += f'<li><a href="/uploads/class_{class_name}/{file}" download="{file}">{file}</a></li>'
+            html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
+            
+        else:
+            # Serve main page
             with open("index.html", "rb") as f:
                 html = f.read()
             html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
@@ -76,35 +93,39 @@ class SimpleHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         # Parse the form data posted
         content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = parse_qs(post_data.decode('utf-8'))
-        action = data.get("action", [""])[0]
+        content_type = self.headers.get('Content-Type')
+        form = cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={'REQUEST_METHOD': 'POST',
+                     'CONTENT_TYPE': content_type}
+        )
+        action = form.getvalue("action")
         print("POSTING")
-        print(data)
+
         # Add Vocab
         if action == "add":
-            vocab_value = data.get("vocab", [None])[0]
+            vocab_value = form.getvalue("vocab")
             a = Vocab(vocab_value)
             classList.append(a)
             write_to_file()
+
         # Delete Vocab
         if action == "delete":
-            id_value = int(data.get("id", [-1])[0])
+            id_value = int(form.getvalue("id", [-1])[0])
             classList.pop(id_value)
             write_to_file()
-        if action == "import":
-            print("Importing file...")
-            form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={'REQUEST_METHOD': 'POST'})
-            file_item = form['file']
-            if file_item.filename:
-                filename = os.path.basename(file_item.filename)
-                os.makedirs("uploads", exist_ok=True)
-                with open(os.path.join("uploads", filename), "wb") as f:
-                    f.write(file_item.file.read())
-                print(f"Saved {filename}")
-            else:
-                print("No file uploaded")
         
+        # Storing and parsing file uploads
+        if action == "upload":
+            #write file to uploads directory within the class specified
+            class_name = form.getvalue("class_name")
+            os.makedirs(f"uploads{os.sep}class_{class_name}", exist_ok=True)
+            file_data = form['file']
+            if file_data.filename:
+                with open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}", "wb") as f:
+                    f.write(file_data.file.read())
+
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
