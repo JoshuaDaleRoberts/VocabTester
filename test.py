@@ -3,7 +3,7 @@ import socketserver
 import pickle
 import os
 import cgi
-import textract
+import pypdf
 from urllib.parse import urlparse, parse_qs
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
@@ -30,6 +30,7 @@ def read_from_file():
 # Initialize the class list, but grab from file if it exists
 try:
     classList = read_from_file()
+
 except FileNotFoundError:
     classList = []
     pickle.dump(classList, open("items.pkl", "wb"))
@@ -125,6 +126,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
             if file_data.filename:
                 with open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}", "wb") as f:
                     f.write(file_data.file.read())
+            text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
+            print(text.pages[0].extract_text())
+
 
         self.send_response(200)
         self.send_header("Content-type", "text/html")
