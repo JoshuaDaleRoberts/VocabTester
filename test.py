@@ -1,8 +1,9 @@
 import http.server
 import socketserver
-from urllib.parse import parse_qs
 import pickle
-from urllib.parse import urlparse
+import os
+import cgi
+from urllib.parse import urlparse, parse_qs
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
@@ -31,6 +32,9 @@ try:
 except FileNotFoundError:
     classList = []
     pickle.dump(classList, open("items.pkl", "wb"))
+
+#Initialize directory for document uploads
+os.makedirs("uploads", exist_ok=True)
 
 # Function to generate HTML list items from the class list
 def make_html_list():
@@ -75,6 +79,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = parse_qs(post_data.decode('utf-8'))
         action = data.get("action", [""])[0]
+        print("POSTING")
+        print(data)
         # Add Vocab
         if action == "add":
             vocab_value = data.get("vocab", [None])[0]
@@ -86,6 +92,19 @@ class SimpleHandler(BaseHTTPRequestHandler):
             id_value = int(data.get("id", [-1])[0])
             classList.pop(id_value)
             write_to_file()
+        if action == "import":
+            print("Importing file...")
+            form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={'REQUEST_METHOD': 'POST'})
+            file_item = form['file']
+            if file_item.filename:
+                filename = os.path.basename(file_item.filename)
+                os.makedirs("uploads", exist_ok=True)
+                with open(os.path.join("uploads", filename), "wb") as f:
+                    f.write(file_item.file.read())
+                print(f"Saved {filename}")
+            else:
+                print("No file uploaded")
+        
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
