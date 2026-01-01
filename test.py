@@ -57,39 +57,94 @@ def make_html_list():
     return text
 
 class SimpleHandler(BaseHTTPRequestHandler):
+
+    # Handle Get requests, different pages
     def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
+        
         page = urlparse(self.path)
+
+        # Serve class page
         if page.path == "/class":
-            # Serve class page
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            # Access class.html filee
             with open("class.html", "rb") as f:
                 html = f.read()
+
+            # Sets values for html replacements
             class_number = page.query
             class_name = classList[int(class_number)].name
+
             # Handles title of class page
             html = html.replace(b"<!-- c -->", class_name.encode('utf-8'))
+
             # Handles form building for uploads
             html = html.replace(b"replace_with_class_name", class_name.encode('utf-8'))
-            # grabbing uploaded files
+
+            # Grabs uploaded files
             try:
                 file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
-                print(file_array)
             except FileNotFoundError:
                 file_array = []
             file_list_html = ""
+
+            # Makes <li> of uploaded files
             for file in file_array:
-                file_list_html += f'<li><a href="/uploads/class_{class_name}/{file}" download="{file}">{file}</a></li>'
-            html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
+                file_list_html += f'<li><a href="/download?class={class_name}&file={file}" download="{file}">{file}</a></li>'
             
+            # And inserts the <li>s onto the page
+            html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
+            self.wfile.write(html)
+
+
+        elif page.path == "/download":
+            print("DOWNLOAD REQUESTED")
+            params = parse_qs(page.query)
+
+            class_name = params.get("class", [None])[0]
+            filename = params.get("file", [None])[0]
+
+            # Basic validation
+            if not class_name or not filename:
+                self.send_error(400, "Bad request")
+                return
+
+            # Prevent path traversal
+            if ".." in class_name or ".." in filename or "/" in filename:
+                self.send_error(403, "Forbidden")
+                return
+
+            filepath = os.path.join("uploads", f"class_{class_name}", filename)
+            print(f"filepath: {filepath}")
+
+            if not os.path.isfile(filepath):
+                self.send_error(404, "File not found")
+                return
+
+            # Serve file as download
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header(
+                "Content-Disposition",
+                f'attachment; filename="{filename}"'
+            )
+            self.send_header("Content-Length", os.path.getsize(filepath))
+            self.end_headers()
+
+            with open(filepath, "rb") as f:
+                self.wfile.write(f.read())
+            return
+        
         else:
             # Serve main page
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
             with open("index.html", "rb") as f:
                 html = f.read()
             html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
-            
-        self.wfile.write(html)
+            self.wfile.write(html)
         
     def do_POST(self):
         # Parse the form data posted
