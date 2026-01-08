@@ -5,6 +5,7 @@ import os
 import cgi
 import pypdf
 from urllib.parse import urlparse, parse_qs, quote, unquote
+from pathlib import Path
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
@@ -177,6 +178,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
         
         # Storing and parsing file uploads
         if action == "upload":
+            print("Uploading file...")
             #write file to uploads directory within the class specified
             class_name = form.getvalue("class_name")
             os.makedirs(f"uploads{os.sep}class_{class_name}", exist_ok=True)
@@ -184,8 +186,23 @@ class SimpleHandler(BaseHTTPRequestHandler):
             if file_data.filename:
                 with open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}", "wb") as f:
                     f.write(file_data.file.read())
-            text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
-            print(text.pages[0].extract_text())
+            ext = Path(file_data.filename).suffix.lower()
+            text = ""
+            match ext:
+                case ".pdf":
+                    text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
+                    print(text.pages[0].extract_text())
+                case ".docx":
+                    print("DOCX parsing not implemented yet.")
+                case "doc":
+                    print("DOC parsing not implemented yet.")
+                case "pptx":
+                    print("PPTX parsing not implemented yet.")
+                case "ppt":
+                    print("PPT parsing not implemented yet.")
+                case ".txt":
+                    print("TXT parsing not implemented yet.")
+                
 
 
         self.send_response(200)
