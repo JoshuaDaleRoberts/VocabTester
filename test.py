@@ -170,11 +170,28 @@ class SimpleHandler(BaseHTTPRequestHandler):
             classList.append(a)
             write_to_file()
 
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            with open("index.html", "rb") as f:
+                html = f.read()
+                html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
+                self.wfile.write(html)
+        
+
         # Delete Vocab
         if action == "delete":
             id_value = int(form.getvalue("id", [-1])[0])
             classList.pop(id_value)
             write_to_file()
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            with open("index.html", "rb") as f:
+                html = f.read()
+                html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
+                self.wfile.write(html)
         
         # Storing and parsing file uploads
         if action == "upload":
@@ -191,7 +208,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             match ext:
                 case ".pdf":
                     text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
-                    print(text.pages[0].extract_text())
+                    text = text.pages[0].extract_text()
                 case ".docx":
                     print("DOCX parsing not implemented yet.")
                 case "doc":
@@ -202,16 +219,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     print("PPT parsing not implemented yet.")
                 case ".txt":
                     print("TXT parsing not implemented yet.")
-                
-
-
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        with open("index.html", "rb") as f:
-          html = f.read()
-          html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
-          self.wfile.write(html)
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            with open("adder.html", "rb") as f:
+                html = f.read()
+                html = html.replace(b"<!-- ITEMS -->", text.encode('utf-8'))
+                self.wfile.write(html)
 
 if __name__ == "__main__":
     server = HTTPServer(('localhost', port), SimpleHandler)
