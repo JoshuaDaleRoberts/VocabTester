@@ -4,7 +4,7 @@ import pickle
 import os
 import cgi
 import pypdf
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, quote, unquote
 port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
@@ -91,19 +91,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
 
             # Makes <li> of uploaded files
             for file in file_array:
-                file_list_html += f'<li><a href="/download?class={class_name}&file={file}" download="{file}">{file}</a></li>'
-            
+                safe = quote(file)
+                file_list_html += (f'<li><a href="/download?class={class_name}&file={safe}">{file}</a></li>')
+
             # And inserts the <li>s onto the page
             html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
             self.wfile.write(html)
 
 
         elif page.path == "/download":
-            print("DOWNLOAD REQUESTED")
+
+            # Handle file download requests
             params = parse_qs(page.query)
 
             class_name = params.get("class", [None])[0]
             filename = params.get("file", [None])[0]
+            filename = unquote(filename)
 
             # Basic validation
             if not class_name or not filename:
