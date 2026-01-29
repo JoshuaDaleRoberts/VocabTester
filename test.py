@@ -15,6 +15,15 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 class Vocab():
     def __init__(self, name):
         self.name = name
+        self.roots = []
+        self.forms = []
+
+class Root():
+    def __init__(self, root, pos, nounClass=None, plural=None):
+        self.root = root
+        self.pos = pos
+        self.nounClass = nounClass
+        self.plural = plural
 
 
 # Functions to read and write the class list to a file

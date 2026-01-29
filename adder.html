@@ -6,7 +6,56 @@
   <title>Adder</title>
 </head>
 <body>
-  <p>Hello world</p>
   <p> <!-- ITEMS --> </p>
+  <table>
+    <tr>
+      <td> <label for="wordForm">Word form:</label> </td>
+      <td> <input type="text" id="wordForm"></td>
+    </tr>
+  </table>
+  <form>
+    <table>
+      <tr>
+        <td> <label for="root">Root:</label> </td>
+        <td> <input type="text" title="root" name="root" id="root"> </td>
+      </tr>
+      <tr>
+        <td> <label for="pos">Part of speech:</label> </td>
+        <td> <select title="pos" name="pos" id="pos">
+          <option value="noun">Noun</option>
+          <option value="verb">Verb</option>
+          <option value="adjective">Adjective</option>
+          <option value="other">Other</option>
+        </select> </td>
+      </tr>
+      <tr class="nounHandler">
+        <td> <label for = "nounClass:">Noun class:</label> </td>
+        <td> <select title="nounClass" name="nounClass" id="nounClass">
+          <option value="m/wa">m/wa</option>
+          <option value="m/mi">m/mi</option>
+          <option value="ji/ma">ji/ma</option>
+          <option value="ki/vi">ki/vi</option>
+          <option value="n/n">n/n</option>
+          <option value="u/zi">u/zi</option>
+          <option value="ma only">ma only</option>
+        </select> </td>
+      </tr>
+      <tr class="nounHandler">
+        <td> <label for = "plural">Plural form:</label> </td>
+        <td> <input type="text" title="plural" name="plural" id="plural"> </td>
+      </tr>
+      <tr>
+        <td> <label for = "addToList">Add to vocabulary list?</label> </td>
+        <td> <input type="checkbox" title="addToList" name="addToList" id="addToList" checked> </td>
+      </tr>
+      <tr id="englishHandler">
+        <td><label for = "englishMeaning">English meaning:</label> </td>
+        <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning"></td>
+      </tr>
+    </table>
+    <input type="submit" value="Submit">
+  </form>
 </body>
+<script src="adder.js">
+</script>
 </html>
