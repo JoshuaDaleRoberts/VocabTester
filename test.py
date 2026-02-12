@@ -16,14 +16,21 @@ class Vocab():
     def __init__(self, name):
         self.name = name
         self.roots = []
-        self.forms = []
+        self.forms = set()
 
 class Root():
-    def __init__(self, root, pos, nounClass=None, plural=None):
+    def __init__(self, root, pos, filename: str, nounClass=None, plural=None):
         self.root = root
         self.pos = pos
+        self.filename = filename
         self.nounClass = nounClass
         self.plural = plural
+
+    def __str__(self):
+        return f"{self.root}, {self.pos}, {self.filename}, {self.nounClass}, {self.plural}"
+
+
+
 
 
 # Functions to read and write the class list to a file
@@ -44,6 +51,8 @@ try:
 except FileNotFoundError:
     classList = []
     pickle.dump(classList, open("items.pkl", "wb"))
+
+print(classList[0].name)
 
 #Initialize directory for document uploads
 os.makedirs("uploads", exist_ok=True)
@@ -106,8 +115,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
 
             # And inserts the <li>s onto the page
             html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
+            html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
             self.wfile.write(html)
-
 
         elif page.path == "/download":
 
@@ -148,7 +157,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
             with open(filepath, "rb") as f:
                 self.wfile.write(f.read())
             return
-        
+        # elif page.path == "/adder":
+        #     self.send_response(200)
+        #     self.send_header("Content-type", "text/html")
+        #     self.end_headers()
+        #     with open("adder.html", "rb") as f:
+        #         html = f.read()
+        #     self.wfile.write(html)
         else:
             # Serve main page
             self.send_response(200)
@@ -170,9 +185,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
                      'CONTENT_TYPE': content_type}
         )
         action = form.getvalue("action")
-        print("POSTING")
 
-        # Add Vocab
+        # Add Vocab Object
         if action == "add":
             vocab_value = form.getvalue("vocab")
             a = Vocab(vocab_value)
@@ -186,14 +200,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 html = f.read()
                 html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
                 self.wfile.write(html)
-        
 
-        # Delete Vocab
+        # Delete Vocab Object
         if action == "delete":
             id_value = int(form.getvalue("id", [-1])[0])
+            # Delete the files associated with the class
+            class_name = classList[id_value].name
+            class_dir = f"uploads{os.sep}class_{class_name}"
+            if os.path.isdir(class_dir):
+                for filename in os.listdir(class_dir):
+                    file_path = os.path.join(class_dir, filename)
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                os.rmdir(class_dir)
             classList.pop(id_value)
             write_to_file()
-
+            # Send user back to main page
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
@@ -203,21 +225,24 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 self.wfile.write(html)
         
         # Storing and parsing file uploads
+
         if action == "upload":
             print("Uploading file...")
             #write file to uploads directory within the class specified
             class_name = form.getvalue("class_name")
+            class_number = form.getvalue("classID")
             os.makedirs(f"uploads{os.sep}class_{class_name}", exist_ok=True)
             file_data = form['file']
+            filename = file_data.filename
             if file_data.filename:
-                with open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}", "wb") as f:
+                with open(f"uploads{os.sep}class_{class_name}{os.sep}{filename}", "wb") as f:
                     f.write(file_data.file.read())
             ext = Path(file_data.filename).suffix.lower()
             text = ""
             match ext:
                 case ".pdf":
                     text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
-                    text = text.pages[0].extract_text()
+                    text = "".join(page.extract_text() for page in text.pages)
                 case ".docx":
                     print("DOCX parsing not implemented yet.")
                 case "doc":
@@ -228,13 +253,58 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     print("PPT parsing not implemented yet.")
                 case ".txt":
                     print("TXT parsing not implemented yet.")
+            # Sanitize the text
+            text = text.lower()
+            text = ''.join([i for i in text if i.isalpha() or i.isspace()])
+
+            first_word = text.split(" ")[0]
+            rest_of_text = " ".join(text.split()[1:])
+
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             with open("adder.html", "rb") as f:
                 html = f.read()
-                html = html.replace(b"<!-- ITEMS -->", text.encode('utf-8'))
+                html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
+                html = html.replace(b"FILENAMEPLACEHOLDER", filename.encode('utf-8'))
+                html = html.replace(b"RESTOFTEXTPLACEHOLDER", rest_of_text.encode('utf-8'))
+                html = html.replace(b"WORDINQUESTION", first_word.encode('utf-8'))
                 self.wfile.write(html)
+        
+        #Handle adding a word to a class vocab Object
+        if action == "addword":
+            print("Adding word...")
+            # Grab basic data from the form
+            class_number = form.getvalue("classID")
+            filename = form.getvalue("filename")
+            rest_of_text = form.getvalue("restOfText")
+            root = form.getvalue("root")
+            pos = form.getvalue("pos")
+
+            #make and add Root object
+            rootObject = Root(root, pos, filename, None, None)
+            classList[int(class_number)].roots.append(rootObject)
+
+            first_word = rest_of_text.split()[0]
+            rest_of_text = rest_of_text[len(first_word):].strip()
+            
+            write_to_file()
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            with open("adder.html", "rb") as f:
+                html = f.read()
+                # Hold classID in hidden value
+                html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
+                # Hold filename in hidden value
+                html = html.replace(b"FILENAMEPLACEHOLDER", filename.encode('utf-8'))
+                # Hold rest of text in hidden value
+                html = html.replace(b"RESTOFTEXTPLACEHOLDER", rest_of_text.encode('utf-8'))
+                # Set word in question to first word of rest of text
+                html = html.replace(b"WORDINQUESTION", first_word.encode('utf-8'))
+                self.wfile.write(html)
+        
 
 if __name__ == "__main__":
     server = HTTPServer(('localhost', port), SimpleHandler)

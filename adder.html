@@ -6,14 +6,13 @@
   <title>Adder</title>
 </head>
 <body>
-  <p> <!-- ITEMS --> </p>
   <table>
     <tr>
       <td> <label for="wordForm">Word form:</label> </td>
-      <td> <input type="text" id="wordForm"></td>
+      <td> <input type="text" id="wordForm" value="WORDINQUESTION"></td>
     </tr>
   </table>
-  <form>
+  <form action="/" method="post">
     <table>
       <tr>
         <td> <label for="root">Root:</label> </td>
@@ -54,8 +53,13 @@
       </tr>
     </table>
     <input type="submit" value="Submit">
+    <!-- Hidden values to process later -->
+    <input type="hidden" name="action" value="addword">
+    <input type="hidden" name="classID" value = 'CLASSIDPLACEHOLDER'>
+    <input type="hidden" name="filename" value = 'FILENAMEPLACEHOLDER'>
+    <input type="hidden" name="restOfText" value = 'RESTOFTEXTPLACEHOLDER'>
   </form>
 </body>
-<script src="adder.js">
+<script src="/adder.js">
 </script>
 </html>
