@@ -4,6 +4,8 @@ import pickle
 import os
 import cgi
 import pypdf
+import docx
+from pptx import Presentation
 from urllib.parse import urlparse, parse_qs, quote, unquote
 from pathlib import Path
 port = 2704
@@ -244,12 +246,18 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     text = pypdf.PdfReader(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
                     text = "".join(page.extract_text() for page in text.pages)
                 case ".docx":
-                    print("DOCX parsing not implemented yet.")
-                case "doc":
+                    readtext = docx.Document(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
+                    text = "".join(para.text for para in readtext.paragraphs)
+                case ".doc":
                     print("DOC parsing not implemented yet.")
-                case "pptx":
-                    print("PPTX parsing not implemented yet.")
-                case "ppt":
+                case ".pptx":
+                    readtext = Presentation(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}")
+                    text = " ".join(paragraph.text for slide in readtext.slides 
+                                for shape in slide.shapes
+                                   if shape.has_text_frame
+                                    for paragraph in shape.text_frame.paragraphs)
+                    #print("PPTX parsing not implemented yet.")
+                case ".ppt":
                     print("PPT parsing not implemented yet.")
                 case ".txt":
                     print("TXT parsing not implemented yet.")
