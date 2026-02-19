@@ -6,6 +6,7 @@ var nounDivs = document.getElementsByClassName("nounHandler");
 var posSelector = document.getElementById("pos");
 var englishHandler = document.getElementById("englishHandler");
 var addToListCheckbox = document.getElementById("addToList");
+var transitiveHandler = document.getElementById("transitive");
 
     
 function updateMenu() {
@@ -19,6 +20,11 @@ function updateMenu() {
         for (let i = 0; i < nounDivs.length; i++) {
             nounDivs[i].style.display = "none";
         }
+    }
+    if (selectedPos === "verb") {
+        transitiveHandler.style.display = "table-row";
+    } else {
+        transitiveHandler.style.display = "none";
     }
     //shows or hides english meaning field based on addToList checkbox
     let addToList = addToListCheckbox.checked
