@@ -260,7 +260,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 case ".ppt":
                     print("PPT parsing not implemented yet.")
                 case ".txt":
-                    print("TXT parsing not implemented yet.")
+                    text = open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}").read()
+                    # print("TXT parsing not implemented yet.")
             # Sanitize the text
             text = text.lower()
             text = ''.join([i for i in text if i.isalpha() or i.isspace()])
