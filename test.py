@@ -21,10 +21,11 @@ class Vocab():
         self.forms = set()
 
 class Root():
-    def __init__(self, root, pos, filename: str, nounClass=None, plural=None):
+    def __init__(self, root, pos, filename: str, include_in_list = True, nounClass=None, plural=None):
         self.root = root
         self.pos = pos
         self.filename = filename
+        self.include_in_list = include_in_list
         self.nounClass = nounClass
         self.plural = plural
 
