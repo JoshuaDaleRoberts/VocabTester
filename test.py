@@ -14,25 +14,134 @@ Handler = http.server.SimpleHTTPRequestHandler
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # Define a simple class to hold vocab items
-class Vocab():
-    def __init__(self, name):
-        self.name = name
-        self.roots = []
-        self.forms = set()
+class Root:
+    def getVerbForms(self, rt: str, can_have_objects):
+        verb_forms = set()
+        #INFINITIVE 
+        verb_forms.add("ku" + rt)
+        #HABITUAL
+        verb_forms.add("hu" + rt)
+        #INDICATIVES and RELATIVES
+        # there are only 11 monosyllabic acting verbs. 
+        isMonosyllabic = rt in ["la","fa","ja","nywa","la",'pa','wa','cha','chwa','isha','nya']
+        #add for looping through; positive verb_forms
+        positiveSubjects = ["ni","u","a","tu","wa","m","u","i","li","ya","ki","vi","zi","ku"]
+        #covers present, past, future, perfect, perfect already, conditional, regret, and narriative
+        positiveTenses = ["na","li","ta","me", "mesha","nge","ngali", "ka"]
+        #relative markers, including blank which would be the indicative
+        relatives = ['','ye','o','cho','vyo','yo','lo','zo','ko','po','mo']
+        #affirmative indicatives, and relatives as only the affirmative can have relatives. 
+        affirmativeRoot = "ku" + rt if isMonosyllabic else rt
+        for i in positiveSubjects:
+            for j in positiveTenses:
+                for k in relatives:
+                    verb_forms.add( i + j + k + affirmativeRoot )
+        #temporal relative
+        for i in positiveSubjects:
+            for j in ['li','taka','na']:
+                verb_forms.add(i + j + "po" + rt)
+        #add for looping through; negative verb_forms
+        negativeSubjects = ['si','hu','ha','hatu','hawa','ham','hau','hai','hali','haya','haki','havi','hazi','haku']
+        #negative indicative in the present
+        negativeRoot = rt[:-1] + "i" if rt[-1] == "a" else rt
+        for i in negativeSubjects:
+            verb_forms.add(i + negativeRoot)
+        #past, future, perfect, conditional, and regret tenses
+        negativeTenses = ["ku","ja","ta","singe","singali"]
+        for i in negativeSubjects:
+            for j in negativeTenses:
+                verb_forms.add(i + j + rt)
+        #SUBJUNCTIVES
+        subjunctiveRoot = rt[:-1] + "e" if rt[-1] == "a" else rt
+        for i in positiveSubjects:
+            verb_forms.add(i + subjunctiveRoot)
+        #CONDITIONALS
+        for i in positiveSubjects:
+            verb_forms.add(i + "ki" + rt)
+        #IMPERATIVES
+        #singular, informal
+        verb_forms.add(affirmativeRoot)
+        #plural formal
+        verb_forms.add(rt[:-1] + "eni" if rt[-1] == "a" else rt + "ni")
+        #OBJECTS AND RECIPROCALS, starting with personal pronouns and moving to noun class infixes.
+        if can_have_objects:
+            objectInfixes = ["ni","ku","m","wa","tu","ki","vi","u","i","li","ya","zi","ku","pa"]
+            #If it starts with a vowel,
+            if rt[0] in "aeiou":
+                objectInfixes[2] = "mw"
+            #runs the function again, but with objects turned off and the root replaced with the verb with object
+            for i in objectInfixes:
+                verb_forms.update(getVerbForms(i + rt, can_have_objects=False))        
+            verb_forms.update(getVerbForms(rt + "na" if rt[-1] == "a" else rt + "ana", can_have_objects=False))
 
-class Root():
-    def __init__(self, root, pos, filename: str, include_in_list = True, nounClass=None, plural=None):
+        return verb_forms 
+    def __init__(self, root, pos, filename, include_in_vocab_list=True, english=None, plural=None, transitive=False):
         self.root = root
         self.pos = pos
         self.filename = filename
-        self.include_in_list = include_in_list
-        self.nounClass = nounClass
+        self.english = english
         self.plural = plural
+        self.transitive = transitive
+        self.include_in_vocab_list = include_in_vocab_list
+        self.forms = set()
 
-    def __str__(self):
-        return f"{self.root}, {self.pos}, {self.filename}, {self.nounClass}, {self.plural}"
+        if pos == "verb":
+            self.forms = self.getVerbForms(root, can_have_objects=transitive)
+        
+        #nouns are bare simple, with four forms: singular, plural, singular with ni, and plural with ni.
+        if pos == "noun":
+            self.forms = {root, plural, root + "ni", plural + "ni"}
+
+        if pos == "adjective":
+            # n is at the beginning to deal with the two below rules
+            prefixes = ["n","m","wa","ki","vi","mi","","ma","ku","pa"]
+            # chief pocket rule makes nfupi -> fupi
+            chief_pocket = root[0] in "fpkt" or root[:2] in ["ch"]
+            if chief_pocket:
+                prefixes.pop(0)
+            # if it starts with a vowel, the m prefix becomes mw
+            if root[0] in "aeio":
+                prefixes[1] = "mw"
+            # r rule makes nrefu to ndefu
+            if root[0] == "r":
+                prefixes.pop(0)
+                self.forms.add("nd" + root[1:])
+            for i in prefixes:
+                self.forms.add(i + root)
+
+        if pos == "other":
+            self.forms.add(root)
+    
+    def get_forms(self):
+        return self.forms
 
 
+class Vocab:
+    def __init__(self, name):
+        self.name = name
+        self.roots = []
+        self.forms = {'wa','cha','vya','ya','la','kwa','pa','mwa','za','huyu','huyo','yule','hawa','hao','wale','hiki','hicho','kile','hivi','hivyo','vile','huu','huo','ule','hii','hiyo','ile','hili','hilo','lile','haya','hayo','yale','hii','hiyo','ile','hizi','hizo','zile','huu','huo','ule','hizi','hizo','zile','huku','huko','kule','hapa','hapo','pale','humu','humo','mle','ambaye','ambao','ambacho','ambavyo','ambao','ambayo','ambalo','ambayo','ambazo','ambako','ambapo','ambamo','mimi','wewe','yeye','sisi','ninyi','wao','mwenye','wenye','yenye','lenye','chenye','vyenye','zenye','penye','kwenye','mwenye','nina','una','ana','tuna','mna','wana','ina','lina','ana','kina','vina','ina','zina','pana','kuna','sina','huna','hana','hatuna','hamna','hawana','hauna','haina','halina','hayana','hakina','hvina','haina','hazina','hauna','hakuna','hamna','yeyote','wowote','yoyote','lolote','chochote','vyovyote','zozote','popote','kokote','momote','yupi','wepi','upi','ipi','lipi','yapi','kipi','vipi','ipi','zipi','upi','zipi','papi','kupi','mpi'}
+    def in_vocab(self, word):
+        return word in self.forms
+    def add_root(self, root: Root):
+        self.roots.append(root)
+        self.forms.update(root.get_forms())
+    def get_vocab_list(self, filename = None):
+        if filename is not None:
+            return [[i.root, i.english] for i in self.roots if i.filename == filename and i.include_in_vocab_list]
+        else:
+            return [[i.root, i.english] for i in self.roots if i.include_in_vocab_list]
+    def sanitize_text(self, text):
+        #returns text with existing forms removed.
+        #text should be preprocessed, with punc removed, all lowercase, and separated by spaces.
+        words = text.split()
+        sanitized_words = [word for word in words if word not in self.forms]
+        return ' '.join(sanitized_words)
+    def fast_sanitize(self, text, root):
+        #removes only one root from the text
+        words = text.split()
+        sanitized_words = [word for word in words if word not in root.get_forms()]
+        return ' '.join(sanitized_words)
 
 
 
