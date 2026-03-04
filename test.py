@@ -238,25 +238,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
             file_list_html = make_file_html_list(class_name)
 
             # # Grabs uploaded files
-            # try:
-            #     file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
-            # except FileNotFoundError:
-            #     file_array = []
-            # file_list_html = ""
-
-            # # Makes <li> of uploaded files
-            # for file in file_array:
-            #     safe = quote(file)
-            #     file_list_html += (f"""
-            #                        <li>
-            #                         <a href="/download?class={class_name}&file={safe}">{file}</a>
-            #                         <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
-            #                             <input type="hidden" name="action" value="delete_file">
-            #                             <input type="hidden" name="classname" value="{class_name}">
-            #                             <input type="hidden" name="id" value="{file_array.index(file)}">
-            #                             <button type="submit">Delete</button>
-            #                         </form>
-            #                        </li>""")
 
             # And inserts the <li>s onto the page
             html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
