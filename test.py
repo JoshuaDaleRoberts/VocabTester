@@ -418,7 +418,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             text = ''.join([i for i in text if i.isalpha() or i.isspace()])
 
             #GREAT MERGER sanitize and remove existing words from text
-            test = classList[class_number].sanitize_text(text)
+            text = classList[class_number].sanitize_text(text)
 
             first_word = text.split(" ")[0]
             rest_of_text = " ".join(text.split()[1:])
