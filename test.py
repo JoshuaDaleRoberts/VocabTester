@@ -55,8 +55,6 @@ except FileNotFoundError:
     classList = []
     pickle.dump(classList, open("items.pkl", "wb"))
 
-print(classList[0].name)
-
 #Initialize directory for document uploads
 os.makedirs("uploads", exist_ok=True)
 
@@ -176,7 +174,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 return
 
             filepath = os.path.join("uploads", f"class_{class_name}", filename)
-            print(f"filepath: {filepath}")
 
             if not os.path.isfile(filepath):
                 self.send_error(404, "File not found")
@@ -195,13 +192,18 @@ class SimpleHandler(BaseHTTPRequestHandler):
             with open(filepath, "rb") as f:
                 self.wfile.write(f.read())
             return
-        # elif page.path == "/adder":
-        #     self.send_response(200)
-        #     self.send_header("Content-type", "text/html")
-        #     self.end_headers()
-        #     with open("adder.html", "rb") as f:
-        #         html = f.read()
-        #     self.wfile.write(html)
+
+        elif page.path == '/vocab':
+            params = parse_qs(page.query)
+            filename = params.get("file", [None])[0]
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            with open("vocab.html", "rb") as f:
+                html = f.read()
+            html = html
+            self.wfile.write(html)
+
         else:
             # Serve main page
             self.send_response(200)
@@ -289,7 +291,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
         # Storing and parsing file uploads
 
         if action == "upload":
-            print("Uploading file...")
             #write file to uploads directory within the class specified
             class_name = form.getvalue("class_name")
             class_number = form.getvalue("classID")
@@ -342,7 +343,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
         
         #Handle adding a word to a class vocab Object
         if action == "addword":
-            print("Adding word...")
             # Grab basic data from the form
             class_number = form.getvalue("classID")
             filename = form.getvalue("filename")
