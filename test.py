@@ -78,6 +78,30 @@ def make_html_list():
         """
     return text
 
+def make_file_html_list(class_name):
+    # Grabs uploaded files
+    try:
+        file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
+    except FileNotFoundError:
+        file_array = []
+
+    file_list_html = ""
+
+    # Makes <li> of uploaded files (Delete Form Inside HTML Text)
+    for file in file_array:
+        safe = quote(file)
+        file_list_html += (f"""
+                            <li>
+                            <a href="/download?class={class_name}&file={safe}">{file}</a>
+                            <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                <input type="hidden" name="action" value="delete_file">
+                                <input type="hidden" name="classname" value="{class_name}">
+                                <input type="hidden" name="id" value="{file_array.index(file)}">
+                                <button type="submit">Delete</button>
+                            </form>
+                            </li>""")
+    return file_list_html
+
 class SimpleHandler(BaseHTTPRequestHandler):
 
     # Handle Get requests, different pages
@@ -104,17 +128,28 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # Handles form building for uploads
             html = html.replace(b"replace_with_class_name", class_name.encode('utf-8'))
 
-            # Grabs uploaded files
-            try:
-                file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
-            except FileNotFoundError:
-                file_array = []
-            file_list_html = ""
+            file_list_html = make_file_html_list(class_name)
 
-            # Makes <li> of uploaded files
-            for file in file_array:
-                safe = quote(file)
-                file_list_html += (f'<li><a href="/download?class={class_name}&file={safe}">{file}</a></li>')
+            # # Grabs uploaded files
+            # try:
+            #     file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
+            # except FileNotFoundError:
+            #     file_array = []
+            # file_list_html = ""
+
+            # # Makes <li> of uploaded files
+            # for file in file_array:
+            #     safe = quote(file)
+            #     file_list_html += (f"""
+            #                        <li>
+            #                         <a href="/download?class={class_name}&file={safe}">{file}</a>
+            #                         <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
+            #                             <input type="hidden" name="action" value="delete_file">
+            #                             <input type="hidden" name="classname" value="{class_name}">
+            #                             <input type="hidden" name="id" value="{file_array.index(file)}">
+            #                             <button type="submit">Delete</button>
+            #                         </form>
+            #                        </li>""")
 
             # And inserts the <li>s onto the page
             html = html.replace(b"<!-- FILES -->", file_list_html.encode('utf-8'))
@@ -227,6 +262,30 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 html = html.replace(b"<!-- ITEMS -->", make_html_list().encode('utf-8'))
                 self.wfile.write(html)
         
+        # Delete Individual File
+        if action == "delete_file":
+            id_value = int(form.getvalue("id", [-1])[0])
+            class_name = form.getvalue("classname", [-1])
+            # Checks for error
+            if not os.path.exists(f"uploads{os.sep}class_{class_name}"):
+                return "Invalid class"
+            file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
+            # Checks for valid ID value inside the file array
+            if 0 <= id_value < len(file_array):
+                file_name = file_array[id_value] #Retrieves the File Name
+                file_dir = f"uploads{os.sep}class_{class_name}"
+                # Delete the individual files associated with the class
+                os.remove(os.path.join(file_dir, file_name))
+                #Send user back to Class page and Reload the page
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                with open("class.html", "rb") as f:
+                    html = f.read()
+                    html = html.replace(b"<!-- FILES -->", make_file_html_list(class_name).encode('utf-8'))
+                    self.wfile.write(html)
+
+
         # Storing and parsing file uploads
 
         if action == "upload":
@@ -320,4 +379,5 @@ if __name__ == "__main__":
     server = HTTPServer(('localhost', port), SimpleHandler)
     print(f"Server running on http://localhost:{port}")
     server.serve_forever()
+    #server.shutdown() #stops server in the program
 
