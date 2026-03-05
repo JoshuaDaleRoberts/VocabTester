@@ -173,6 +173,7 @@ def make_html_list():
     text = ""
     for i in range(len(classList)):
         name = classList[i].name
+        #GREAT MERGER
         text += f""" 
         <li>
             <a href="/class?{i}">{name}</a>
@@ -185,7 +186,7 @@ def make_html_list():
         """
     return text
 
-def make_file_html_list(class_name):
+def make_file_html_list(class_name, class_id):
     # Grabs uploaded files
     try:
         file_array = os.listdir(f"uploads{os.sep}class_{class_name}")
@@ -204,6 +205,8 @@ def make_file_html_list(class_name):
                                 <input type="hidden" name="action" value="delete_file">
                                 <input type="hidden" name="classname" value="{class_name}">
                                 <input type="hidden" name="id" value="{file_array.index(file)}">
+                                <input type="hidden" name="classID" value="{class_id}">
+
                                 <button type="submit">Delete</button>
                             </form>
                             </li>""")
@@ -235,7 +238,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # Handles form building for uploads
             html = html.replace(b"replace_with_class_name", class_name.encode('utf-8'))
 
-            file_list_html = make_file_html_list(class_name)
+            file_list_html = make_file_html_list(class_name, class_number)
 
             # # Grabs uploaded files
 
@@ -358,6 +361,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
         if action == "delete_file":
             id_value = int(form.getvalue("id", [-1])[0])
             class_name = form.getvalue("classname", [-1])
+            class_id = form.getvalue("classID")
             # Checks for error
             if not os.path.exists(f"uploads{os.sep}class_{class_name}"):
                 return "Invalid class"
@@ -374,7 +378,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 with open("class.html", "rb") as f:
                     html = f.read()
-                    html = html.replace(b"<!-- FILES -->", make_file_html_list(class_name).encode('utf-8'))
+                    html = html.replace(b"<!-- FILES -->", make_file_html_list(class_name, class_id).encode('utf-8'))
+                    html = html.replace(b"CLASSIDPLACEHOLDER", class_id.encode('utf-8'))
                     self.wfile.write(html)
 
 
@@ -418,7 +423,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             text = ''.join([i for i in text if i.isalpha() or i.isspace()])
 
             #GREAT MERGER sanitize and remove existing words from text
-            text = classList[class_number].sanitize_text(text)
+            text = classList[int(class_number)].sanitize_text(text)
 
             first_word = text.split(" ")[0]
             rest_of_text = " ".join(text.split()[1:])
@@ -442,14 +447,24 @@ class SimpleHandler(BaseHTTPRequestHandler):
             rest_of_text = form.getvalue("restOfText")
             root = form.getvalue("root")
             pos = form.getvalue("pos")
+            include_in_vocab_list = form.getvalue("addToList")
+            english = form.getvalue("englishMeaning")
+            transitive = form.getvalue("transitive")
+            plural = form.getvalue("plural")
 
             #make and add Root object
-            rootObject = Root(root, pos, filename, None, None)
-            classList[int(class_number)].roots.append(rootObject)
+            rootObject = Root(root, pos, filename, include_in_vocab_list=include_in_vocab_list, english=english, plural=plural, transitive=transitive)
+            classList[int(class_number)].add_root(rootObject)
 
+            #removes the root and its forms from the proceeding text
+            if (rest_of_text):
+                rest_of_text = classList[int(class_number)].fast_sanitize(text = rest_of_text, root=rootObject)
+
+            #grab the first word
             first_word = rest_of_text.split()[0]
+            #reformats text without first word
             rest_of_text = rest_of_text[len(first_word):].strip()
-            
+            #saves the vocab data 
             write_to_file()
 
             self.send_response(200)
