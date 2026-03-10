@@ -240,6 +240,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
             with open("adder.js", "rb") as f:
                 self.wfile.write(f.read())
         
+        if page.path == "/favicon.ico":
+            self.send_response(200)
+            self.send_header("Content-type", "image/x-icon")
+            self.end_headers()
+            with open("favicon.ico", "rb") as f:
+                self.wfile.write(f.read())
+        
         # Serve class page
         elif page.path == "/class":
             self.send_response(200)
