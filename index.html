@@ -3,23 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Testing</title>
+  <title>Vocabulary List Creator</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <ul>  
-    <!-- ITEMS -->
-  </ul>
-
-  <form action = "/" method = "post">
+  <h1>Current Classes</h1>
+  <nav>
+    <ul>
+      <li><a href="/">Current Classes</a></li>
+    </ul>
+  </nav>
+<br>
+  <form action = "/" method = "post" class="add_class">
     <input type="hidden" name="action" value="add">
-    <input type="text" name="vocab" placeholder="New Item" autocomplete="off">
+    <input type="text" name="vocab" placeholder="Enter Class Name" autocomplete="off">
     <button type="submit">
       Add Class
     </button>
   </form>
+  <ul class="classes">  
+    <!-- ITEMS -->
+  </ul>
 <br>
-  <form action = "/" method = "post" enctype="multipart/form-data">
+  <form action = "/" method = "post" enctype="multipart/form-data" class="import_class">
     <input type="hidden" name="action" value="import">
     <input type="file" name="importfile" title="importfile">
     <button type="submit">
@@ -32,7 +38,7 @@
     Export
     </button>
   </form>  
-  <form action = "/" method = "post">
+  <form action = "/" method = "post" class="test">
    <button type="submit">
       Hello World
     </button>

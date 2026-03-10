@@ -176,12 +176,13 @@ def make_html_list():
         #GREAT MERGER
         text += f""" 
         <li>
-            <a href="/class?{i}">{name}</a>
-            <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this class?');">
-                <input type="hidden" name="action" value="delete">
-                <input type="hidden" name="id" value="{i}">
-                <button type="submit">Delete</button>
-            </form>
+            <a href="/class?{i}">{name}
+                <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this class?');">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="{i}">
+                    <button type="submit">Delete</button>
+                </form>
+            </a>
         </li>
         """
     return text
@@ -219,8 +220,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
         
         page = urlparse(self.path)
 
+        # Serve CSS
+        if page.path == "/style.css":
+            self.send_response(200)
+            self.send_header("Content-type", "text/css")
+            self.end_headers()
+            with open("style.css", "rb") as f:
+                self.wfile.write(f.read())
         # Serve class page
-        if page.path == "/class":
+        elif page.path == "/class":
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()

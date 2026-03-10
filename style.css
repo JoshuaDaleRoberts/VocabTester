@@ -1,3 +1,123 @@
-li{
-    outline:solid black 2px
+.test button{
+    background: red;
 }
+
+body{
+    margin:0;
+    /* background-color:  */
+}
+
+/*Navigation/Header Text*/
+nav{
+    /* Font (DECIDE THIS IN PERSON) */
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 0;
+    text-align: left;
+    font-size: 32px;
+    /* background-color: rgb(153, 21, 224); */
+
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(128, 25, 183);
+}
+
+nav ul li {
+    float: left;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: rgb(94, 12, 138);
+}
+
+h1{
+    /*MARGIN IS VERY IMPORTANT (Some Styles have default margins set)*/
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 0;
+    text-align: left;
+    font-size: 32px;
+    padding: 20px;
+    background-color: rgb(128, 25, 183);
+    color: white
+}
+
+/*Add Class Input*/
+.add_class{
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+
+/*Class Styles*/
+.classes{
+    display: flex;              /*makes the list side-by-side*/
+    flex-wrap: wrap;            /*makes the list go to a new line at end of viewport*/
+    gap: 50px;                  /*size of spacing between elements*/
+    margin: 0;
+    justify-content: center;    /*centers the text/objects horizontally*/
+    padding: 0;                 /*expands the object's size*/
+    list-style: none;           /*removes bullet points*/
+    overflow-x: hidden;         /*hides the horizontal scrollbar*/
+}
+
+.classes li {
+    margin: 0;
+    padding: 0;
+    width: 150px;
+}
+
+.classes a{
+    display: flex;                      /*makes the boxes side-by-side*/
+    width: 150px;
+    height: 100px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    border: 2px solid #ccc;           /*border style*/
+    justify-content: center;            /*centers text to the center horizontally*/
+    align-items: center;                /*aligns text to the center vertically*/
+    text-decoration: none;              /*removes the underlines that come with href*/
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    margin-bottom: 40px;
+    position: relative;                 /*sets the child(buttons) to be relative to this object*/
+}
+
+.classes a:hover{
+    background-color: #b6b5b5;
+}
+
+
+.classes button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    position: absolute;                 /*makes the child's position based off of the parent*/
+    left: 30%;                          /*adjust position based off of left of parent*/
+    top: 110%;                          /*adjust position based off of top of parent*/
+    border: 1px solid darkred;
+}
+
+.classes button:hover{
+    background-color: rgb(142, 21, 21);
+}
+
+/*Import Button?*/
+/* .import_class{
+    clear:both
+} */
