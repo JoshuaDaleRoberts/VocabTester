@@ -176,13 +176,15 @@ def make_html_list():
         #GREAT MERGER
         text += f""" 
         <li>
-            <a href="/class?{i}">{name}
+            <div>
+                <a href="/class?{i}">{name} </a>
                 <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this class?');">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="id" value="{i}">
                     <button type="submit">Delete</button>
                 </form>
-            </a>
+            </div>
+
         </li>
         """
     return text
@@ -202,18 +204,23 @@ def make_file_html_list(class_name, class_id):
         file_list_html += (f"""
                             <tr>
                             <td>
-                            <a href="/download?class={class_name}&file={safe}">{file}</a>
-                            <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
-                                <input type="hidden" name="action" value="delete_file">
-                                <input type="hidden" name="classname" value="{class_name}">
-                                <input type="hidden" name="id" value="{file_array.index(file)}">
-                                <input type="hidden" name="classID" value="{class_id}">
-
-                                <button type="submit">Delete</button>
-                            </form>
+                                {file}
                             </td>
                             <td>
-                            <a href="/vocab?class={class_id}&file={safe}">View Vocab</a>
+                                <a href="/download?class={class_name}&file={safe}">Download</a>
+                            </td>
+                            <td>
+                                <a href="/vocab?class={class_id}&file={safe}">View Vocab</a>
+                            </td>
+                            <td>
+                                <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                    <input type="hidden" name="action" value="delete_file">
+                                    <input type="hidden" name="classname" value="{class_name}">
+                                    <input type="hidden" name="id" value="{file_array.index(file)}">
+                                    <input type="hidden" name="classID" value="{class_id}">
+
+                                    <button type="submit">Delete</button>
+                                </form>
                             </td>
                             </tr>""")
     return file_list_html
@@ -232,8 +239,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open("style.css", "rb") as f:
                 self.wfile.write(f.read())
+  
+        elif page.path == "/style_class.css":
+            self.send_response(200)
+            self.send_header("Content-type", "text/css")
+            self.end_headers()
+            with open("style_class.css", "rb") as f:
+                self.wfile.write(f.read())
         
-        if page.path == "/adder.js":
+        elif page.path == "/adder.js":
             self.send_response(200)
             self.send_header("Content-type", "application/javascript")
             self.end_headers()

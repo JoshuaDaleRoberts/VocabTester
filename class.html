@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Files</title>
+  <title><!-- c --> Vocabulary List</title>
+  <link rel="stylesheet" type="text/css" href="style_class.css">
 </head>
 <body>
-  <h1>Class Page</h1>
-  <p> <!-- c --> </p>
-  <a href="/">Back to Home</a>
-  <form action="/" method="post" enctype="multipart/form-data">
+  <h1>Class: <!-- c --></h1>
+  <nav>
+    <ul>
+      <li><a href="/">Back to Home</a></li>
+    </ul>
+  </nav>
+  <br>
+  <form action="/" method="post" enctype="multipart/form-data" class="upload">
     <input type="file" name="file" title="file">
     <input type="hidden" name="class_name" value='replace_with_class_name'>
     <input type="hidden" name="action" value="upload">
@@ -18,6 +23,9 @@
   </form>
   <h2> Files </h2>
   <table>
+    <tr>
+      <td>File Names</td>
+    </tr>
     <!-- FILES -->
   </table>
 </body>
