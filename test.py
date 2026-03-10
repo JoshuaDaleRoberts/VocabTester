@@ -5,6 +5,7 @@ import os
 import cgi
 import pypdf
 import docx
+import threading
 from pptx import Presentation
 from urllib.parse import urlparse, parse_qs, quote, unquote
 from pathlib import Path
@@ -239,6 +240,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open("style.css", "rb") as f:
                 self.wfile.write(f.read())
+        
+        elif page.path == "/shutdown":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Server shutdown.")
+
+            threading.Thread(target=self.server.shutdown).start()
   
         elif page.path == "/style_class.css":
             self.send_response(200)
@@ -254,7 +262,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             with open("adder.js", "rb") as f:
                 self.wfile.write(f.read())
         
-        if page.path == "/favicon.ico":
+        elif page.path == "/favicon.ico":
             self.send_response(200)
             self.send_header("Content-type", "image/x-icon")
             self.end_headers()
@@ -540,6 +548,10 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     html = html.replace(b"<!-- FILES -->", make_file_html_list(classList[int(class_number)].name, class_number).encode('utf-8'))
                     html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
                     self.wfile.write(html)
+        
+        # if action == "shutdown":
+        #     server.shutdown()
+        #     server.server_close()
         
 
 if __name__ == "__main__":
