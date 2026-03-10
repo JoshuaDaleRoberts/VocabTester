@@ -37,6 +37,7 @@ function updateMenu() {
 
 posSelector.addEventListener("change",  () => updateMenu());
 addToListCheckbox.addEventListener("change",  () => updateMenu());
+document.body.onload = () => updateMenu();
 
 
 //code that smart completes noun class and plural form

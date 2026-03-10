@@ -200,7 +200,8 @@ def make_file_html_list(class_name, class_id):
     for file in file_array:
         safe = quote(file)
         file_list_html += (f"""
-                            <li>
+                            <tr>
+                            <td>
                             <a href="/download?class={class_name}&file={safe}">{file}</a>
                             <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
                                 <input type="hidden" name="action" value="delete_file">
@@ -210,7 +211,11 @@ def make_file_html_list(class_name, class_id):
 
                                 <button type="submit">Delete</button>
                             </form>
-                            </li>""")
+                            </td>
+                            <td>
+                            <a href="/vocab?class={class_id}&file={safe}">View Vocab</a>
+                            </td>
+                            </tr>""")
     return file_list_html
 
 class SimpleHandler(BaseHTTPRequestHandler):
@@ -310,7 +315,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open("vocab.html", "rb") as f:
                 html = f.read()
-            html = html
+            running_text = ""
+            vocab_list = classList[int(params.get("class", [None])[0])].get_vocab_list(filename)
+            for root, english in vocab_list:
+                running_text += f"<tr><td>{root}</td><td>{english}</td></tr>"
+            html = html.replace(b"<!--ITEMS-->", running_text.encode('utf-8'))
+
+            
             self.wfile.write(html)
 
         else:
