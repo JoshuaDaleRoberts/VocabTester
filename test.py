@@ -484,30 +484,41 @@ class SimpleHandler(BaseHTTPRequestHandler):
             classList[int(class_number)].add_root(rootObject)
 
             #removes the root and its forms from the proceeding text
+            print(rest_of_text)
             if (rest_of_text):
-                rest_of_text = classList[int(class_number)].fast_sanitize(text = rest_of_text, root=rootObject)
+                rest_of_text = classList[int(class_number)].fast_sanitize(text = rest_of_text, root=rootObject)                
 
-            #grab the first word
-            first_word = rest_of_text.split()[0]
-            #reformats text without first word
-            rest_of_text = rest_of_text[len(first_word):].strip()
-            #saves the vocab data 
-            write_to_file()
+                #grab the first word
+                first_word = rest_of_text.split()[0]
+                #reformats text without first word
+                rest_of_text = rest_of_text[len(first_word):].strip()
+                #saves the vocab data 
+                write_to_file()
 
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            with open("adder.html", "rb") as f:
-                html = f.read()
-                # Hold classID in hidden value
-                html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
-                # Hold filename in hidden value
-                html = html.replace(b"FILENAMEPLACEHOLDER", filename.encode('utf-8'))
-                # Hold rest of text in hidden value
-                html = html.replace(b"RESTOFTEXTPLACEHOLDER", rest_of_text.encode('utf-8'))
-                # Set word in question to first word of rest of text
-                html = html.replace(b"WORDINQUESTION", first_word.encode('utf-8'))
-                self.wfile.write(html)
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                with open("adder.html", "rb") as f:
+                    html = f.read()
+                    # Hold classID in hidden value
+                    html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
+                    # Hold filename in hidden value
+                    html = html.replace(b"FILENAMEPLACEHOLDER", filename.encode('utf-8'))
+                    # Hold rest of text in hidden value
+                    html = html.replace(b"RESTOFTEXTPLACEHOLDER", rest_of_text.encode('utf-8'))
+                    # Set word in question to first word of rest of text
+                    html = html.replace(b"WORDINQUESTION", first_word.encode('utf-8'))
+                    self.wfile.write(html)
+            else: 
+                # if nothing left, send to class page
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                with open("class.html", "rb") as f:
+                    html = f.read()
+                    html = html.replace(b"<!-- FILES -->", make_file_html_list(classList[int(class_number)].name, class_number).encode('utf-8'))
+                    html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
+                    self.wfile.write(html)
         
 
 if __name__ == "__main__":
