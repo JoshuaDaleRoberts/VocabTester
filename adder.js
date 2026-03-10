@@ -37,8 +37,6 @@ function updateMenu() {
 
 posSelector.addEventListener("change",  () => updateMenu());
 addToListCheckbox.addEventListener("change",  () => updateMenu());
-document.body.onload = () => updateMenu();
-
 
 //code that smart completes noun class and plural form
 const wordInput = document.getElementById("wordForm");
@@ -127,49 +125,41 @@ function guessWord() {
     //if all verb checks fail, default to nouns
     //check for common two letter noun class prefixes
     //default to n/n
-    let guessClass = "n/n"
-    let guessPlural = ""
+    let guessPlural = rootAttempt
     if (!alreadyGuessed && rootAttempt.length > 2) {
         switch (firstTwoLetters) {
             case "wa":
-                guessClass = "m/wa"
                 guessRoot = "m" + rootAttempt.slice(2)
                 guessPlural = rootAttempt
                 alreadyGuessed = true;
 
                 break;
             case "mi":
-                guessClass = "m/mi"
                 guessRoot = "m" + rootAttempt.slice(2)
                 guessPlural = rootAttempt
                 alreadyGuessed = true;
                 break;
             case "ki":
-                guessClass = "ki/vi"
                 guessRoot = rootAttempt
                 guessPlural = "vi" + rootAttempt.slice(2)
                 alreadyGuessed = true;
                 break;
             case "vi":
-                guessClass = "ki/vi"
                 guessRoot = "ki" + rootAttempt.slice(2)
                 guessPlural = rootAttempt
                 alreadyGuessed = true;
                 break;
             case "ch":
-                guessClass = "ki/vi"
                 guessRoot = rootAttempt
                 guessPlural = "vy" + rootAttempt.slice(2)
                 alreadyGuessed = true;
                 break;
             case "vy":
-                guessClass = "ki/vi"
                 guessRoot = "ch" + rootAttempt.slice(2)
                 guessPlural = rootAttempt
                 alreadyGuessed = true;
                 break;
             case "ma":
-                guessClass = "ji/ma"
                 guessRoot = rootAttempt.slice(2)
                 alreadyGuessed = true;
                 break;
@@ -181,7 +171,6 @@ function guessWord() {
     //set the guessed values
     document.getElementById("root").value = guessRoot;
     document.getElementById("pos").value = guessPOS;
-    document.getElementById("nounClass").value = guessClass;
     document.getElementById("plural").value = guessPlural;
     //updates the menu to show noun fields if necessary
     updateMenu();
@@ -189,3 +178,7 @@ function guessWord() {
 }
 
 document.getElementById("wordForm").addEventListener("input", () => guessWord());
+document.body.onload = () => {
+    guessWord();
+    updateMenu();
+}
