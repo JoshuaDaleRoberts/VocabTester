@@ -227,6 +227,14 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open("style.css", "rb") as f:
                 self.wfile.write(f.read())
+        
+        if page.path == "/adder.js":
+            self.send_response(200)
+            self.send_header("Content-type", "application/javascript")
+            self.end_headers()
+            with open("adder.js", "rb") as f:
+                self.wfile.write(f.read())
+        
         # Serve class page
         elif page.path == "/class":
             self.send_response(200)
