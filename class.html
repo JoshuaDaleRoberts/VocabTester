@@ -11,6 +11,7 @@
   <nav>
     <ul>
       <li><a href="/">Back to Home</a></li>
+      <li><a href="/shutdown">Close Program </a></li>
     </ul>
   </nav>
   <br>
@@ -21,10 +22,11 @@
     <input type="hidden" name="classID" value = 'CLASSIDPLACEHOLDER'>
     <input type="submit" value="Upload">
   </form>
-  <h2> Files </h2>
+  <h2> List of Files </h2>
   <table>
-    <tr>
+    <tr id="table_title">
       <td>File Names</td>
+      <td colspan="3" id="options">Options</td>
     </tr>
     <!-- FILES -->
   </table>

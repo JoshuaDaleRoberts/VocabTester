@@ -6,6 +6,7 @@ import cgi
 import pypdf
 import docx
 import threading
+import time
 from pptx import Presentation
 from urllib.parse import urlparse, parse_qs, quote, unquote
 from pathlib import Path
@@ -204,16 +205,16 @@ def make_file_html_list(class_name, class_id):
         safe = quote(file)
         file_list_html += (f"""
                             <tr>
-                            <td>
+                            <td id = "file_name_element">
                                 {file}
                             </td>
-                            <td>
+                            <td class = "fixed_col" id = "download_file_element">
                                 <a href="/download?class={class_name}&file={safe}">Download</a>
                             </td>
-                            <td>
+                            <td class = "fixed_col" id = "view_vocab_element">
                                 <a href="/vocab?class={class_id}&file={safe}">View Vocab</a>
                             </td>
-                            <td>
+                            <td class = "fixed_col">
                                 <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
                                     <input type="hidden" name="action" value="delete_file">
                                     <input type="hidden" name="classname" value="{class_name}">
@@ -241,10 +242,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
             with open("style.css", "rb") as f:
                 self.wfile.write(f.read())
         
+        #Shuts down server
         elif page.path == "/shutdown":
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b"Server shutdown.")
+            self.wfile.write(b"Server shutdown. Please close this tab.")
 
             threading.Thread(target=self.server.shutdown).start()
   
