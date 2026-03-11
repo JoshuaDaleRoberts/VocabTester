@@ -241,6 +241,20 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             with open("style.css", "rb") as f:
                 self.wfile.write(f.read())
+
+        elif page.path == "/style_class.css":
+            self.send_response(200)
+            self.send_header("Content-type", "text/css")
+            self.end_headers()
+            with open("style_class.css", "rb") as f:
+                self.wfile.write(f.read())
+
+        elif page.path == "/style_adder.css":
+            self.send_response(200)
+            self.send_header("Content-type", "text/css")
+            self.end_headers()
+            with open("style_adder.css", "rb") as f:
+                self.wfile.write(f.read())
         
         #Shuts down server
         elif page.path == "/shutdown":
@@ -249,13 +263,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"Server shutdown. Please close this tab.")
 
             threading.Thread(target=self.server.shutdown).start()
-  
-        elif page.path == "/style_class.css":
-            self.send_response(200)
-            self.send_header("Content-type", "text/css")
-            self.end_headers()
-            with open("style_class.css", "rb") as f:
-                self.wfile.write(f.read())
         
         elif page.path == "/adder.js":
             self.send_response(200)

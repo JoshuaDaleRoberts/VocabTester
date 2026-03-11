@@ -3,55 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adder</title>
+  <title>Add Vocabs Form</title>
+  <link rel="stylesheet" type="text/css" href="style_adder.css">
 </head>
 <body>
-  <table>
-    <tr>
-      <td> <label for="wordForm">Word form:</label> </td>
-      <td> <input type="text" id="wordForm" value="WORDINQUESTION"></td>
-    </tr>
-  </table>
-  <form action="/" method="post">
+  <h1>Add Words from Document</h1>
+  <div class="form">
     <table>
       <tr>
-        <td> <label for="root">Root:</label> </td>
-        <td> <input type="text" title="root" name="root" id="root"> </td>
-      </tr>
-      <tr>
-        <td> <label for="pos">Part of speech:</label> </td>
-        <td> <select title="pos" name="pos" id="pos">
-          <option value="noun">Noun</option>
-          <option value="verb">Verb</option>
-          <option value="adjective">Adjective</option>
-          <option value="other">Other</option>
-        </select> </td>
-      </tr>
-      <tr class="nounHandler">
-        <td> <label for = "plural:">Plural:</label> </td>
-        <td> 
-          <input type="text" title="plural" name="plural" id="plural">
-        </td>
-      </tr>
-      <tr id="transitive">
-        <td> <label for = "transitive">Transitive verb?</label> </td>
-        <td> <input type="checkbox" title="transitive" name="transitive" id="transitive"> </td>
-      <tr>
-        <td> <label for = "addToList">Add to vocabulary list?</label> </td>
-        <td> <input type="checkbox" title="addToList" name="addToList" id="addToList" checked> </td>
-      </tr>
-      <tr id="englishHandler">
-        <td><label for = "englishMeaning">English meaning:</label> </td>
-        <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning"></td>
+        <td> <input type="text" id="word_input" value="WORDINQUESTION"></td>
       </tr>
     </table>
-    <input type="submit" value="Submit">
-    <!-- Hidden values to process later -->
-    <input type="hidden" name="action" value="addword">
-    <input type="hidden" name="classID" value = 'CLASSIDPLACEHOLDER'>
-    <input type="hidden" name="filename" value = 'FILENAMEPLACEHOLDER'>
-    <input type="hidden" name="restOfText" value = 'RESTOFTEXTPLACEHOLDER'>
-  </form>
+    <form action="/" method="post">
+      <table class="characteristics">
+        <tr>
+          <td class="label"> <label for="root">Root:</label> </td>
+          <td> <input type="text" title="root" name="root" id="root"> </td>
+        </tr>
+        <tr>
+          <td class="label"> <label for="pos">Part of speech:</label> </td>
+          <td> <select title="pos" name="pos" id="pos">
+            <option value="noun">Noun</option>
+            <option value="verb">Verb</option>
+            <option value="adjective">Adjective</option>
+            <option value="other">Other</option>
+          </select> </td>
+        </tr>
+        <tr class="nounHandler">
+          <td class="label"> <label for = "plural:">Plural:</label> </td>
+          <td> 
+            <input type="text" title="plural" name="plural" id="plural">
+          </td>
+        </tr>
+        <tr id="transitive">
+          <td class="label"> <label for = "transitive">Transitive verb?</label> </td>
+          <td> <input type="checkbox" title="transitive" name="transitive" id="transitive"> </td>
+        <tr>
+          <td class="label"> <label for = "addToList">Add to vocabulary list?</label> </td>
+          <td> <input type="checkbox" title="addToList" name="addToList" id="addToList" checked> </td>
+        </tr>
+        <tr id="englishHandler">
+          <td class="label"><label for = "englishMeaning">English meaning:</label> </td>
+          <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning"></td>
+        </tr>
+      </table>
+      <input type="submit" id = "next_button" value="Next Word">
+      <!-- Hidden values to process later -->
+      <input type="hidden" name="action" value="addword">
+      <input type="hidden" name="classID" value = 'CLASSIDPLACEHOLDER'>
+      <input type="hidden" name="filename" value = 'FILENAMEPLACEHOLDER'>
+      <input type="hidden" name="restOfText" value = 'RESTOFTEXTPLACEHOLDER'>
+    </form>
+  </div>
 </body>
 <script src="/adder.js">
 </script>
