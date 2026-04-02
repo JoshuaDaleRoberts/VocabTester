@@ -39,7 +39,7 @@ posSelector.addEventListener("change",  () => updateMenu());
 addToListCheckbox.addEventListener("change",  () => updateMenu());
 
 //code that smart completes noun class and plural form
-const wordInput = document.getElementById("wordForm");
+const wordInput = document.getElementById("word_input");
 
 function guessWord() {
     rootAttempt = wordInput.value;
@@ -177,8 +177,36 @@ function guessWord() {
     
 }
 
-document.getElementById("wordForm").addEventListener("input", () => guessWord());
+document.getElementById("word_input").addEventListener("input", () => guessWord());
 document.body.onload = () => {
     guessWord();
     updateMenu();
 }
+
+const addWordForm = document.getElementById("addWordForm");
+addWordForm.addEventListener("submit", (event) => {
+
+    // Ensure that if the part of speech is noun, a plural form is provided
+    const isNoun = document.getElementById("pos").value === "noun";
+    const pluralValue = document.getElementById("plural").value;
+    if (isNoun && pluralValue.trim() === "") {
+        event.preventDefault();
+        alert("Please provide a plural form for the noun.");
+    }
+    const addToList = document.getElementById("addToList").checked;
+    const englishTranslation = document.getElementById("englishMeaning").value;
+    if (addToList && englishTranslation.trim() === "") {
+        event.preventDefault();
+        alert("Please provide an English translation if you want to add the word to the vocab list.");
+    }
+}); 
+
+// Code for not swahili button
+const notSwahiliButton = document.getElementById("not_swahili");
+notSwahiliButton.addEventListener("click", () => {
+    // Set the part of speech to other
+    document.getElementById("pos").value = "other";
+    // Uncheck the add to vocabulary list checkbox
+    document.getElementById("addToList").checked = false;
+    updateMenu();
+});

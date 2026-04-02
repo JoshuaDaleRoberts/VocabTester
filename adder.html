@@ -11,10 +11,10 @@
   <div class="form">
     <table>
       <tr>
-        <td> <input type="text" id="word_input" value="WORDINQUESTION"></td>
+        <td> <input type="text" id="word_input" value="WORDINQUESTION" title = "input_text"></td>
       </tr>
     </table>
-    <form action="/" method="post">
+    <form action="/" method="post" id = "addWordForm">
       <table class="characteristics">
         <tr>
           <td class="label"> <label for="root">Root:</label> </td>
@@ -47,7 +47,10 @@
           <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning"></td>
         </tr>
       </table>
-      <input type="submit" id = "next_button" value="Next Word">
+      <div id="submit_holder">
+        <input type="button" id="not_swahili" value = "Not a Swahili Word">
+        <input type="submit" id = "next_button" value="Next Word">
+      </div>
       <!-- Hidden values to process later -->
       <input type="hidden" name="action" value="addword">
       <input type="hidden" name="classID" value = 'CLASSIDPLACEHOLDER'>

@@ -122,7 +122,7 @@ class Vocab:
     def __init__(self, name):
         self.name = name
         self.roots = []
-        self.forms = {'wa','cha','vya','ya','la','kwa','pa','mwa','za','huyu','huyo','yule','hawa','hao','wale','hiki','hicho','kile','hivi','hivyo','vile','huu','huo','ule','hii','hiyo','ile','hili','hilo','lile','haya','hayo','yale','hii','hiyo','ile','hizi','hizo','zile','huu','huo','ule','hizi','hizo','zile','huku','huko','kule','hapa','hapo','pale','humu','humo','mle','ambaye','ambao','ambacho','ambavyo','ambao','ambayo','ambalo','ambayo','ambazo','ambako','ambapo','ambamo','mimi','wewe','yeye','sisi','ninyi','wao','mwenye','wenye','yenye','lenye','chenye','vyenye','zenye','penye','kwenye','mwenye','nina','una','ana','tuna','mna','wana','ina','lina','ana','kina','vina','ina','zina','pana','kuna','sina','huna','hana','hatuna','hamna','hawana','hauna','haina','halina','hayana','hakina','hvina','haina','hazina','hauna','hakuna','hamna','yeyote','wowote','yoyote','lolote','chochote','vyovyote','zozote','popote','kokote','momote','yupi','wepi','upi','ipi','lipi','yapi','kipi','vipi','ipi','zipi','upi','zipi','papi','kupi','mpi'}
+        self.forms = {'wa','cha','vya','ya','la','kwa','pa','mwa','za','huyu','huyo','yule','hawa','hao','wale','hiki','hicho','kile','hivi','hivyo','vile','huu','huo','ule','hii','hiyo','ile','hili','hilo','lile','haya','hayo','yale','hii','hiyo','ile','hizi','hizo','zile','huu','huo','ule','hizi','hizo','zile','huku','huko','kule','hapa','hapo','pale','humu','humo','mle','ambaye','ambao','ambacho','ambavyo','ambao','ambayo','ambalo','ambayo','ambazo','ambako','ambapo','ambamo','mimi','wewe','yeye','sisi','ninyi','wao','mwenye','wenye','yenye','lenye','chenye','vyenye','zenye','penye','kwenye','mwenye','nina','una','ana','tuna','mna','wana','ina','lina','ana','kina','vina','ina','zina','pana','kuna','sina','huna','hana','hatuna','hamna','hawana','hauna','haina','halina','hayana','hakina','hvina','haina','hazina','hauna','hakuna','hamna','yeyote','wowote','yoyote','lolote','chochote','vyovyote','zozote','popote','kokote','momote','yupi','wepi','upi','ipi','lipi','yapi','kipi','vipi','ipi','zipi','upi','zipi','papi','kupi','mpi','wangu','yangu','changu','vyangu','langu','zangu','kwangu','pangu','mwangu','wetu','zetu','yetu','chetu','vyetu','letu','kwetu','petu','mwetu','wako','chako','vyako','yako','lako','zako','kwako','pako','mwako','wenu','chenu','vyenu','lenu','yenu','zenu','kwenu','penu','mwenu','wake','chake','vyake','lake','yake','zake','kwake','pake','mwake','wao','chao','vyao','yao','lao','zao','kwao','pao','mwao'}
     def in_vocab(self, word):
         return word in self.forms
     def add_root(self, root: Root):
@@ -549,14 +549,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     self.wfile.write(html)
             else: 
                 # if nothing left, send to class page
-                self.send_response(200)
-                self.send_header("Content-type", "text/html")
+                self.send_response(302)
+                self.send_header('Location', f'/class?{class_number}')
                 self.end_headers()
-                with open("class.html", "rb") as f:
-                    html = f.read()
-                    html = html.replace(b"<!-- FILES -->", make_file_html_list(classList[int(class_number)].name, class_number).encode('utf-8'))
-                    html = html.replace(b"CLASSIDPLACEHOLDER", class_number.encode('utf-8'))
-                    self.wfile.write(html)
         
         # if action == "shutdown":
         #     server.shutdown()
