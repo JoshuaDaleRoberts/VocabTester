@@ -212,7 +212,7 @@ def make_file_html_list(class_name, class_id):
                                 <a href="/download?class={class_name}&file={safe}">Download</a>
                             </td>
                             <td class = "fixed_col" id = "view_vocab_element">
-                                <a href="/vocab?class={class_id}&file={safe}">View Vocab</a>
+                                <a href="/vocab?class={class_id}&file={safe}" target="_blank">View Vocab</a>
                             </td>
                             <td class = "fixed_col">
                                 <form method="post" action="/" onsubmit="return confirm('Are you sure you want to delete this file?');">
