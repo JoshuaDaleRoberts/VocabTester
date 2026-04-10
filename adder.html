@@ -11,14 +11,14 @@
   <div class="form">
     <table>
       <tr>
-        <td> <input type="text" id="word_input" value="WORDINQUESTION" title = "input_text"></td>
+        <td> <input type="text" id="word_input" value="WORDINQUESTION" title = "input_text" autocomplete="off"></td>
       </tr>
     </table>
     <form action="/" method="post" id = "addWordForm">
       <table class="characteristics">
         <tr>
           <td class="label"> <label for="root">Root:</label> </td>
-          <td> <input type="text" title="root" name="root" id="root"> </td>
+          <td> <input type="text" title="root" name="root" id="root" autocomplete="off"> </td>
         </tr>
         <tr>
           <td class="label"> <label for="pos">Part of speech:</label> </td>
@@ -32,7 +32,7 @@
         <tr class="nounHandler">
           <td class="label"> <label for = "plural:">Plural:</label> </td>
           <td> 
-            <input type="text" title="plural" name="plural" id="plural">
+            <input type="text" title="plural" name="plural" id="plural" autocomplete="off">
           </td>
         </tr>
         <tr id="transitive">
@@ -44,7 +44,7 @@
         </tr>
         <tr id="englishHandler">
           <td class="label"><label for = "englishMeaning">English meaning:</label> </td>
-          <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning"></td>
+          <td><input type="text" title="englishMeaning" name="englishMeaning" id="englishMeaning" autocomplete="off"></td>
         </tr>
       </table>
       <div id="submit_holder">

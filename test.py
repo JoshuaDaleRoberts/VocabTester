@@ -7,6 +7,7 @@ import pypdf
 import docx
 import threading
 import time
+import socket
 from pptx import Presentation
 from urllib.parse import urlparse, parse_qs, quote, unquote
 from pathlib import Path
@@ -14,6 +15,15 @@ port = 2704
 Handler = http.server.SimpleHTTPRequestHandler
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
+def get_lan_ip():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("8.8.8.8", 80))
+            return sock.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
 
 # Define a simple class to hold vocab items
 class Root:
@@ -73,8 +83,8 @@ class Root:
                 objectInfixes[2] = "mw"
             #runs the function again, but with objects turned off and the root replaced with the verb with object
             for i in objectInfixes:
-                verb_forms.update(getVerbForms(i + rt, can_have_objects=False))        
-            verb_forms.update(getVerbForms(rt + "na" if rt[-1] == "a" else rt + "ana", can_have_objects=False))
+                verb_forms.update(self.getVerbForms(i + rt, can_have_objects=False))        
+            verb_forms.update(self.getVerbForms(rt + "na" if rt[-1] == "a" else rt + "ana", can_have_objects=False))
 
         return verb_forms 
     def __init__(self, root, pos, filename, include_in_vocab_list=True, english=None, plural=None, transitive=False):
@@ -481,7 +491,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 case ".ppt":
                     print("PPT parsing not implemented yet.")
                 case ".txt":
-                    text = open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}").read()
+                    text = open(f"uploads{os.sep}class_{class_name}{os.sep}{file_data.filename}", encoding='utf-8').read()
                     # print("TXT parsing not implemented yet.")
             # Sanitize the text
             text = text.lower()
@@ -559,8 +569,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
         
 
 if __name__ == "__main__":
-    server = HTTPServer(('localhost', port), SimpleHandler)
+    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
     print(f"Server running on http://localhost:{port}")
+    print(f"Network access: http://{get_lan_ip()}:{port}")
     server.serve_forever()
     #server.shutdown() #stops server in the program
 
