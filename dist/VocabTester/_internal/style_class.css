@@ -1,0 +1,162 @@
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    /* background-color:  */
+}
+
+/*Navigation/Header Text*/
+nav{
+    /* Font (DECIDE THIS IN PERSON) */
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 0;
+    text-align: left;
+    font-size: 16px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    background-color: rgb(104, 21, 148);
+}
+
+nav ul li {
+    float: left;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: rgb(94, 12, 138);
+}
+
+h1{
+    /*MARGIN IS VERY IMPORTANT (Some Styles have default margins set)*/
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 0;
+    text-align: left;
+    font-size: 32px;
+    padding: 20px;
+    background-color: rgb(128, 25, 183);
+    color: white
+}
+
+/*Upload Button/Input*/
+.upload{
+    text-align: center;
+}
+
+/*File Table Title*/
+h2{
+    margin-left: 10px;
+}
+
+/*Table Styles*/
+tr td{
+    border-bottom: 1px solid rgb(104, 21, 148);
+    border-color: rgb(104, 21, 148);
+}
+
+table{
+    border-collapse: collapse;
+    overflow: auto; 
+    border-radius: 6px;
+    margin-left: 10%;
+    margin-right: 10%;
+    min-width: 50%;
+    max-width: 80%;
+    width: 100vw;
+}
+
+tr{
+    border-spacing: 0 15px;
+}
+
+th #table_title{
+    border-right: 1px rgb(104, 21, 148);
+}
+
+#table_title{
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#options{
+    text-align: center;
+    padding-right: 71px;
+}
+
+#file_name_element{
+    width: auto;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+    border-right: 1px rgb(104, 21, 148);
+}
+
+.fixed_col {
+    width: 100px;
+    position: sticky;
+    right: 0;         /* stick to the right edge of the viewport */
+    background: white; /* needed to cover content behind */
+    text-align: center; /* optional: right-align text */
+    z-index: 1;        /* keep it above other content */
+}
+
+#download_file_element a{
+    background-color: #3ed6fc;
+    border-radius: 6px;
+    border: 1px solid #003ea8;           /*border style*/
+    text-decoration: none;              /*removes the underlines that come with href*/
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    margin-bottom: 5px;
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+#download_file_element a:hover{
+    background-color: rgb(31, 127, 211);
+}
+
+#view_vocab_element a{
+    background-color: #79dc55;
+    border-radius: 6px;
+    border: 1px solid #006519;           /*border style*/
+    text-decoration: none;              /*removes the underlines that come with href*/
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(0, 0, 0);
+    margin-bottom: 5px;
+    padding: 6px 10px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#view_vocab_element a:hover{
+    background-color: rgb(6, 145, 6);
+}
+
+table button {
+    background-color: rgb(245, 55, 55);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    left: 30%;                          /*adjust position based off of left of parent*/
+    top: 110%;                          /*adjust position based off of top of parent*/
+    border: 1px solid darkred;
+    margin: 10px;
+    margin-right: 100px;
+}
+
+table button:hover{
+    background-color: rgb(142, 21, 21);
+}

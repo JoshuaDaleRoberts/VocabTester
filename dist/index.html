@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary List Creator</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <h1>Uneno</h1>
+  <nav>
+    <ul>
+      <li><a href="/">Home Page </a></li>
+      <li><a href="/shutdown">Close Program </a></li>
+    </ul>
+  </nav>
+<br>
+  <form action = "/" method = "post" class="add_class">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="vocab" placeholder="Enter Class Name" autocomplete="off">
+    <button type="submit">
+      Add Class
+    </button>
+  </form>
+  <ul class="classes">  
+    <!-- ITEMS -->
+  </ul>
+<br>
+  <!-- <form action = "/" method = "post" enctype="multipart/form-data" class="import_class">
+    <input type="hidden" name="action" value="import">
+    <input type="file" name="importfile" title="importfile">
+    <button type="submit">
+    Import
+    </button>
+  </form>
+  <form action = "/" method = "post">
+    <input type="hidden" name="action" value="export">
+    <button type="submit">
+    Export
+    </button>
+  </form>  
+  <form action = "/" method = "post" class="test">
+   <button type="submit">
+      Hello World
+    </button>
+  </form> -->
+</body>
+</html>

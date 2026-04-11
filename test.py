@@ -9,6 +9,7 @@ import threading
 import time
 import socket
 from pptx import Presentation
+import webbrowser
 from urllib.parse import urlparse, parse_qs, quote, unquote
 from pathlib import Path
 port = 2704
@@ -572,6 +573,6 @@ if __name__ == "__main__":
     server = HTTPServer(('0.0.0.0', port), SimpleHandler)
     print(f"Server running on http://localhost:{port}")
     print(f"Network access: http://{get_lan_ip()}:{port}")
+    webbrowser.open(f"http://{get_lan_ip()}:{port}")
     server.serve_forever()
-    #server.shutdown() #stops server in the program
 
